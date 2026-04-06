@@ -23,6 +23,9 @@ namespace ColonistBarAdjuster
 		public static float OffsetX => Settings.OffsetX;
 		public static float OffsetY => Settings.OffsetY;
 		public static float BaseScale => Settings.BaseScale;
+		public static float WeaponOffsetX => Settings.WeaponOffsetX;
+		public static float WeaponOffsetY => Settings.WeaponOffsetY;
+		public static float WeaponScale => Settings.WeaponScale;
 		public static bool HideBackground => Settings.HideBackground;
 		#endregion
 

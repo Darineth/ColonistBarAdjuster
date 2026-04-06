@@ -4,18 +4,32 @@
 	<SY_CBA.OffsetXDesc>Adjust the offset of the bar from left, positive numbers move the bar right, negative move it left</SY_CBA.OffsetXDesc>
 	<SY_CBA.OffsetY>Offset from top</SY_CBA.OffsetY>
 	<SY_CBA.OffsetYDesc>Adjust the offset of the bar from top, positive numbers move the bar down, negative move it up</SY_CBA.OffsetYDesc>
+	
 	<SY_CBA.BaseScale>Base scale</SY_CBA.BaseScale>
 	<SY_CBA.BaseScaleDesc>Scales the colonist bar
 If the number of colonists is greater than "colonists per row" * "maxmimum number of rows", this scaling will be ignored and the bar will be scaled down to fit the screen</SY_CBA.BaseScaleDesc>
+
 	<SY_CBA.ColonistsPerRow>Colonists per row</SY_CBA.ColonistsPerRow>
 	<SY_CBA.ColonistsPerRowDesc>Desired maximum number of colonists per row
 If the number of colonists is greater than "colonists per row" * "maxmimum number of rows", this limit will be ignored and the bar will be scaled down to fit the screen</SY_CBA.ColonistsPerRowDesc>
 	<SY_CBA.MaxNumOfRows>Maximum number of rows</SY_CBA.MaxNumOfRows>
 	<SY_CBA.MaxNumOfRowsDesc>Limits the number of rows</SY_CBA.MaxNumOfRowsDesc>
+	
 	<SY_CBA.MarginX>Margin between colonists</SY_CBA.MarginX>
 	<SY_CBA.MarginXDesc>Adjust the space between colonists</SY_CBA.MarginXDesc>
 	<SY_CBA.MarginY>Margin between rows</SY_CBA.MarginY>
 	<SY_CBA.MarginYDesc>Adjust the space between rows</SY_CBA.MarginYDesc>
+	
+	<SY_CBA.WeaponOffsetX>Horizontal weapon offset</SY_CBA.WeaponOffsetX>
+	<SY_CBA.WeaponOffsetXDesc>Adjust the weapon display's horizontal position
+("Weapons below potrait" must be active)</SY_CBA.WeaponOffsetXDesc>
+	<SY_CBA.WeaponOffsetY>Vertical weapon offset</SY_CBA.WeaponOffsetY>
+	<SY_CBA.WeaponOffsetYDesc>Adjust the weapon display's vertical position
+("Weapons below potrait" must be active)</SY_CBA.WeaponOffsetYDesc>
+	<SY_CBA.WeaponScale>Weapon display scale</SY_CBA.WeaponScale>
+	<SY_CBA.WeaponScaleDesc>Adjust the weapon display's scale
+("Weapons below potrait" must be active)</SY_CBA.WeaponScaleDesc>
+	
 	<SY_CBA.HideBackground>Hide background</SY_CBA.HideBackground>
 	<SY_CBA.HideBackgroundDesc>Hide background box around colonists
 (If colonist are out on a caravan or there is more than one colony)</SY_CBA.HideBackgroundDesc>

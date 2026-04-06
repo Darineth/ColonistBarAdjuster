@@ -41,7 +41,11 @@ namespace ColonistBarAdjuster
 
 			harmony.Patch(
 				AccessTools.Method(typeof(ColonistBarColonistDrawer), nameof(ColonistBarColonistDrawer.DrawColonist)),
-				transpiler: new HarmonyMethod(typeof(HarmonyPatches), nameof(ColonistBarColonistDrawer_DrawColonist_Transpiler)));
+				transpiler: new HarmonyMethod(typeof(HarmonyPatches), nameof(ColonistBarColonistDrawer_DrawColonist_Transpiler)));;
+
+			harmony.Patch(
+				AccessTools.Method(typeof(ColonistBar), nameof(ColonistBar.ColonistBarOnGUI)),
+				transpiler: new HarmonyMethod(typeof(HarmonyPatches), nameof(ColonistBar_ColonistBarOnGUI_Transpiler)));
 		}
 
 		static bool ColonistBarDrawLocsFinder_FindBestScale_Prefix(ColonistBarDrawLocsFinder __instance, ref float __result, ref bool onlyOneRow, ref int maxPerGlobalRow, int groupsCount)
@@ -212,6 +216,57 @@ namespace ColonistBarAdjuster
 			}
 			if (!added)
 				Log.Error($"{nameof(ColonistBarAdjuster)}: failed to apply {nameof(ColonistBarColonistDrawer_DrawColonist_Transpiler)} patch");
+		}
+
+		static IEnumerable<CodeInstruction> ColonistBar_ColonistBarOnGUI_Transpiler(IEnumerable<CodeInstruction> instructions)
+		{
+			var list = instructions.ToList();
+			//Log.Message("------- BEFORE\n" + string.Join("\n", list));
+
+			var state = 0;
+			for (int i = 0; i < list.Count; i++)
+			{
+				var instruction = list[i];
+				switch (state)
+				{
+					case 0:
+						if (instruction.opcode == OpCodes.Callvirt && instruction.operand is MethodInfo mi && mi.Name == "get_IsWeapon")
+							state = 1;
+						break;
+					case 1:
+						if (instruction.opcode == OpCodes.Call && instruction.operand is MethodInfo mi0 && mi0.Name == "get_x")
+						{
+							// insert after
+							list.Insert(++i, new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(ColonistBarAdjuster), nameof(ColonistBarAdjuster.WeaponOffsetX))));
+							list.Insert(++i, new CodeInstruction(OpCodes.Add));
+							state = 2;
+						}
+						break;
+					case 2:
+						if (instruction.opcode == OpCodes.Call && instruction.operand is MethodInfo mi1 && mi1.Name == "get_y")
+						{
+							// insert after
+							list.Insert(++i, new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(ColonistBarAdjuster), nameof(ColonistBarAdjuster.WeaponOffsetY))));
+							list.Insert(++i, new CodeInstruction(OpCodes.Add));
+							state = 3;
+						}
+						break;
+					case 3:
+						if (instruction.opcode == OpCodes.Call && instruction.operand is MethodInfo mi2 && mi2.Name == "ScaledBy")
+						{
+							// insert before
+							list.Insert(i++, new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(ColonistBarAdjuster), nameof(ColonistBarAdjuster.WeaponScale))));
+							list.Insert(i++, new CodeInstruction(OpCodes.Mul));
+							state = 4;
+						}
+						break;
+				}
+			}
+			if (state != 4)
+				Log.Error($"{nameof(ColonistBarAdjuster)}: failed to apply {nameof(ColonistBar_ColonistBarOnGUI_Transpiler)} patch (state: {state})");
+
+			//Log.Message("------- AFTER\n" + string.Join("\n", list));
+			return list;
 		}
 	}
 }

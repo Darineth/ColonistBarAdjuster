@@ -19,6 +19,9 @@ namespace ColonistBarAdjuster
 		public const int Default_MaxNumberOfRows = 3;
 		public const float Default_MarginX = 24f;
 		public const float Default_MarginY = 32f;
+		public const float Default_WeaponOffsetX = 0f;
+		public const float Default_WeaponOffsetY = 0f;
+		public const float Default_WeaponScale = 1f;
 		public const bool Default_HideBackground = false;
 		#endregion
 
@@ -35,12 +38,14 @@ namespace ColonistBarAdjuster
 			get => _offsetY;
 			set => Util.SetValue(ref _offsetY, value, v => ApplyChanges());
 		}
+
 		private float _baseScale = Default_BaseScale;
 		public float BaseScale
 		{
 			get => _baseScale;
 			set => Util.SetValue(ref _baseScale, value, v => ApplyChanges());
 		}
+
 		private int _colonistsPerRow = Default_ColonistsPerRow;
 		public int ColonistsPerRow
 		{
@@ -53,6 +58,7 @@ namespace ColonistBarAdjuster
 			get => _maxNumberOfRows;
 			set => Util.SetValue(ref _maxNumberOfRows, value, v => ApplyChanges());
 		}
+
 		private float _marginX = Default_MarginX;
 		public float MarginX
 		{
@@ -65,6 +71,26 @@ namespace ColonistBarAdjuster
 			get => _marginY;
 			set => Util.SetValue(ref _marginY, value, v => ApplyChanges());
 		}
+
+		private float _weaponOffsetX = Default_WeaponOffsetX;
+		public float WeaponOffsetX
+		{
+			get => _weaponOffsetX;
+			set => Util.SetValue(ref _weaponOffsetX, value, v => ApplyChanges());
+		}
+		private float _weaponOffsetY = Default_WeaponOffsetY;
+		public float WeaponOffsetY
+		{
+			get => _weaponOffsetY;
+			set => Util.SetValue(ref _weaponOffsetY, value, v => ApplyChanges());
+		}
+		private float _weaponScale = Default_WeaponScale;
+		public float WeaponScale
+		{
+			get => _weaponScale;
+			set => Util.SetValue(ref _weaponScale, value, v => ApplyChanges());
+		}
+
 		private bool _hideBackground = Default_HideBackground;
 		public bool HideBackground
 		{
@@ -131,7 +157,7 @@ namespace ColonistBarAdjuster
 					Default_MaxNumberOfRows,
 					nameof(MaxNumberOfRows),
 					1,
-					10);
+					1000);
 
 				MarginX = ControlsBuilder.CreateNumeric(
 					ref offsetY,
@@ -153,6 +179,34 @@ namespace ColonistBarAdjuster
 					nameof(MarginY),
 					1f,
 					100f);
+
+				WeaponOffsetX = ControlsBuilder.CreateNumeric(
+					ref offsetY,
+					width,
+					"SY_CBA.WeaponOffsetX".Translate(),
+					"SY_CBA.WeaponOffsetXDesc".Translate(),
+					WeaponOffsetX,
+					Default_WeaponOffsetX,
+					nameof(WeaponOffsetX),
+					float.MinValue);
+				WeaponOffsetY = ControlsBuilder.CreateNumeric(
+					ref offsetY,
+					width,
+					"SY_CBA.WeaponOffsetY".Translate(),
+					"SY_CBA.WeaponOffsetYDesc".Translate(),
+					WeaponOffsetY,
+					Default_WeaponOffsetY,
+					nameof(WeaponOffsetY),
+					float.MinValue);
+				WeaponScale = ControlsBuilder.CreateNumeric(
+					ref offsetY,
+					width,
+					"SY_CBA.WeaponScale".Translate(),
+					"SY_CBA.WeaponScaleDesc".Translate(),
+					WeaponScale,
+					Default_WeaponScale,
+					nameof(WeaponScale),
+					float.MinValue);
 
 				HideBackground = ControlsBuilder.CreateCheckbox(
 					ref offsetY,
@@ -198,6 +252,16 @@ namespace ColonistBarAdjuster
 			floatValue = MarginY;
 			Scribe_Values.Look(ref floatValue, nameof(MarginY), Default_MarginY);
 			MarginY = floatValue;
+
+			floatValue = WeaponOffsetX;
+			Scribe_Values.Look(ref floatValue, nameof(WeaponOffsetX), Default_WeaponOffsetX);
+			WeaponOffsetX = floatValue;
+			floatValue = WeaponOffsetY;
+			Scribe_Values.Look(ref floatValue, nameof(WeaponOffsetY), Default_WeaponOffsetY);
+			WeaponOffsetY = floatValue;
+			floatValue = WeaponScale;
+			Scribe_Values.Look(ref floatValue, nameof(WeaponScale), Default_WeaponScale);
+			WeaponScale = floatValue;
 
 			var boolValue = HideBackground;
 			Scribe_Values.Look(ref boolValue, nameof(HideBackground), Default_HideBackground);
