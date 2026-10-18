@@ -35,9 +35,11 @@ namespace ColonistBarAdjuster
 					null, new Type[] { typeof(List<Vector2>), typeof(float), typeof(bool), typeof(int), typeof(int) }, null),
 				transpiler: new HarmonyMethod(typeof(HarmonyPatches), nameof(ColonistMarginAdjustment_Transpiler)));
 
+			// a prefix rather than a transpiler: on RimWorld 1.7 DrawGroupFrame keeps a Rect on the stack across its branches,
+			// and the injected early branch to ret fails Harmony 3's stack validation ("Stack underflow at ... DrawRectFast")
 			harmony.Patch(
 				typeof(ColonistBarColonistDrawer).GetMethod(nameof(ColonistBarColonistDrawer.DrawGroupFrame), BindingFlags.Instance | BindingFlags.Public),
-				transpiler: new HarmonyMethod(typeof(HarmonyPatches), nameof(ColonistBarColonistDrawer_DrawGroupFrame_Transpiler)));
+				prefix: new HarmonyMethod(typeof(HarmonyPatches), nameof(ColonistBarColonistDrawer_DrawGroupFrame_Prefix)));
 
 			harmony.Patch(
 				AccessTools.Method(typeof(ColonistBarColonistDrawer), nameof(ColonistBarColonistDrawer.DrawColonist)),
@@ -46,6 +48,8 @@ namespace ColonistBarAdjuster
 			harmony.Patch(
 				AccessTools.Method(typeof(ColonistBar), nameof(ColonistBar.ColonistBarOnGUI)),
 				transpiler: new HarmonyMethod(typeof(HarmonyPatches), nameof(ColonistBar_ColonistBarOnGUI_Transpiler)));
+
+			Log.Message($"[{nameof(ColonistBarAdjuster)}] 1.7 fix build: all patches applied.");
 		}
 
 		static bool ColonistBarDrawLocsFinder_FindBestScale_Prefix(ColonistBarDrawLocsFinder __instance, ref float __result, ref bool onlyOneRow, ref int maxPerGlobalRow, int groupsCount)
@@ -176,26 +180,8 @@ namespace ColonistBarAdjuster
 			return list;
 		}
 
-		static IEnumerable<CodeInstruction> ColonistBarColonistDrawer_DrawGroupFrame_Transpiler(IEnumerable<CodeInstruction> instructions)
-		{
-			var endLabel = new Label();
-
-			var addedInstruction = new CodeInstruction(OpCodes.Call, typeof(ColonistBarAdjuster).GetProperty(nameof(ColonistBarAdjuster.HideBackground), BindingFlags.Static | BindingFlags.Public).GetGetMethod());
-			//Log.Warning(addedInstruction.ToString());
-			yield return addedInstruction;
-
-			addedInstruction = new CodeInstruction(OpCodes.Brtrue, endLabel);
-			//Log.Warning(addedInstruction.ToString());
-			yield return addedInstruction;
-
-			foreach (var instruction in instructions)
-			{
-				if (instruction.opcode == OpCodes.Ret)
-					instruction.labels.Add(endLabel);
-				//Log.Message(instruction.ToString());
-				yield return instruction;
-			}
-		}
+		static bool ColonistBarColonistDrawer_DrawGroupFrame_Prefix() =>
+			!ColonistBarAdjuster.HideBackground;
 
 		static IEnumerable<CodeInstruction> ColonistBarColonistDrawer_DrawColonist_Transpiler(IEnumerable<CodeInstruction> instructions)
 		{
